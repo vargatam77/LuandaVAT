@@ -1,0 +1,63 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "484430950e611ca71a96c0b9ffff0ef7",
+    "packages": [
+        {
+            "name": "tamasvarga/luandaphp",
+            "version": "2.1.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vargatam77/LuandaPHP.git",
+                "reference": "5dd0ebdc8d39f185a677d61abad4215b9c57c772"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vargatam77/LuandaPHP/zipball/5dd0ebdc8d39f185a677d61abad4215b9c57c772",
+                "reference": "5dd0ebdc8d39f185a677d61abad4215b9c57c772",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "TamasVarga\\LuandaPHP\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Tamas Varga",
+                    "email": "vargatam@yahoo.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "LuandaPHP Framework",
+            "support": {
+                "email": "vargatam@yahoo.com",
+                "issues": "https://github.com/vargatam77/LuandaPHP/issues",
+                "source": "https://github.com/vargatam77/LuandaPHP/tree/2.1"
+            },
+            "time": "2026-05-10T05:23:33+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "tamasvarga/luandaphp": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {},
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
+}

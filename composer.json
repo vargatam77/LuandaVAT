@@ -1,0 +1,11 @@
+{
+	"name" : "luandavat/luandavat",
+	"require" : {
+		"tamasvarga/luandaphp" : "2.1.x-dev"
+	},
+	"autoload" : {
+		"psr-4" : {
+			"LuandaVAT\\" : "src"
+		}
+	}
+}

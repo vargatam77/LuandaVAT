@@ -1,0 +1,74 @@
+/* ══════════════════════════════════════════════════════════
+   Theme toggle switch — included alongside style.css
+   Reads the same CSS custom properties so it stays in sync.
+   ══════════════════════════════════════════════════════════ */
+
+/* Hidden checkbox that drives state */
+#theme-chk { display: none; }
+
+/* The visible pill track */
+.theme-switch {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+
+/* Sun / moon icon labels */
+.theme-switch__icon {
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: var(--gold-dim);
+  transition: color 0.35s;
+  pointer-events: none;
+  /* use a tiny Cinzel/Raleway-neutral font stack */
+  font-family: var(--brand-font);
+}
+
+.theme-switch__icon--dark  { order: 0; }
+.theme-switch__icon--light { order: 2; }
+
+/* Track */
+.theme-switch__track {
+  order: 1;
+  position: relative;
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  background: rgba(200,160,96,.15);
+  border: 1px solid var(--gold-faint);
+  transition: background 0.35s, border-color 0.35s;
+  flex-shrink: 0;
+}
+
+/* Thumb */
+.theme-switch__track::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--gold);
+  transition: transform 0.35s cubic-bezier(.4,0,.2,1), background 0.35s;
+  cursor: pointer;
+}
+
+/* Checked = light theme: thumb slides right */
+#theme-chk:checked ~ .theme-switch .theme-switch__track::after {
+  transform: translateX(16px);
+}
+
+/* Active icon highlights */
+.theme-switch__icon--dark  { color: var(--gold); }
+
+#theme-chk:checked ~ .theme-switch .theme-switch__icon--dark  { color: var(--gold-dim); }
+#theme-chk:checked ~ .theme-switch .theme-switch__icon--light { color: var(--gold); }
+
+/* Hover nudge */
+.theme-switch:hover .theme-switch__track { border-color: var(--gold); }
