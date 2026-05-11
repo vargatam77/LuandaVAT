@@ -5,6 +5,7 @@ use LuandaVAT\views\HomeView;
 use LuandaVAT\views\AuthView;
 use LuandaVAT\views\SourceView;
 use LuandaVAT\views\ContactView;
+use LuandaVAT\views\DashboardView;
 
 require_once 'vendor/autoload.php';
 
@@ -25,7 +26,8 @@ if (strtolower($path) === 'login') {
 	$sourceView = new SourceView($theme);
 	$sourceView->createPage()->Show();
 } else {
-	var_dump($path);
+	$dashView = new DashboardView($theme);
+	$dashView->createPage()->Show();
 }
 
 ?>

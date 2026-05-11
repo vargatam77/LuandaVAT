@@ -15,7 +15,7 @@
 
   --gold:          #c8a060;
   --gold-bright:   #f0d880;
-  --gold-dim:      rgba(200,160,96,.40);
+  --gold-dim:      rgba(200,160,96,.60);
   --gold-faint:    rgba(200,160,96,.14);
   --gold-faint2:   rgba(200,160,96,.10);
   --gold-faint3:   rgba(200,160,96,.18);
@@ -101,7 +101,7 @@
 
   --gold:          #2a4a38;
   --gold-bright:   #2a4a38;
-  --gold-dim:      #bab5aa;
+  --gold-faint2:   rgba(42,74,56,.60);
   --gold-faint:    rgba(42,74,56,.14);
   --gold-faint2:   rgba(42,74,56,.10);
   --gold-faint3:   transparent;
@@ -111,10 +111,10 @@
   --accent-fill:   #2a4a38;
   --accent-check:  #2a4a38;
 
-  --text:          #1e1e1a;
-  --text-dim:      #bab5aa;
-  --text-faint:    #bab5aa;
-  --text-meta:     #bab5aa;
+  --text:          #2a4a38;
+  --text-dim:      rgba(42,74,56,.60);
+  --text-faint:    rgba(42,74,56,.40);
+  --text-meta:     rgba(42,74,56,.60);
 
   --brand-font:    'Bodoni Moda', serif;
   --body-font:     'Raleway', sans-serif;
@@ -157,8 +157,8 @@
   --wrapper-pad:   0px;
   --conic-border:  0;
 
-  --check-color:   #2a4a38;
-  --check-tick:    #ffffff;
+  --check-color:   rgba(255,0,0,1);
+  --check-tick:    rgba(255,0,0,1);
 
   --popover-bg:    #ffffff;
   --popover-border:rgba(180,40,40,1);
@@ -202,6 +202,7 @@ html, body {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  cursor: default;
 }
 
 /* .page is the fixed fullscreen frame that Google recommends for
@@ -212,7 +213,7 @@ html, body {
   inset: 0;
   width: 100%;
   height: 100dvh;
-  overflow-y: auto;
+  overflow: hidden;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: none;
 
@@ -225,35 +226,6 @@ html, body {
   font-family: var(--body-font);
   transition: background 0.4s;
 }
-
-/* Drifting glow orbs — on .page so they stay within the fixed frame */
-.page::before {
-  content: '';
-  position: absolute;
-  width: 140vmin;
-  height: 140vmin;
-  background: radial-gradient(circle, var(--orb-color) 0%, transparent 65%);
-  top: -15vmin;
-  right: -5vmin;
-  animation: gl1 16s ease-in-out infinite alternate;
-  pointer-events: none;
-}
-
-.page[data-theme="light"]::after {
-  content: '';
-  position: absolute;
-  width: 55vmin;
-  height: 55vmin;
-  background: radial-gradient(circle, rgba(80,130,90,.12) 0%, transparent 65%);
-  bottom: -8vmin;
-  right: -6vmin;
-  animation: blob2 22s ease-in-out infinite alternate;
-  pointer-events: none;
-}
-
-@keyframes gl1   { to { transform: translate(-7vmin, 9vmin) scale(1.12); } }
-@keyframes blob2 { to { transform: translate(-7vmin, -5vmin) scale(1.13); } }
-
 
 /* ── Wrapper ─────────────────────────────────────────────── */
 
@@ -297,7 +269,7 @@ html, body {
 [data-theme="light"] .wrapper::after {
   content: '';
   position: absolute;
-  inset: -16px;
+  inset: -15px;
   pointer-events: none;
   background:
     linear-gradient(#2a4a38,#2a4a38) top    left  / 22px 1px  no-repeat,
@@ -326,13 +298,12 @@ html, body {
   transition: background 0.4s;
 }
 
-/* Inner top sheen (dark) / inset border (light) */
-.card::before {
+[data-theme="light"] .card::before {
   content: '';
   position: absolute;
-  top: 0; left: 20%; right: 20%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold-faint3), transparent);
+  top: 0; left: 0%; right: 0%;
+  height: 7px;
+  background: linear-gradient(90deg, transparent, var(--text-dim), transparent);
   pointer-events: none;
 }
 
@@ -706,7 +677,7 @@ html, body {
   -webkit-appearance: none;
   width: 13px;
   height: 13px;
-  border: 1px solid rgba(200,160,96,.25);
+  border: 1px solid var(--text-dim);
   border-radius: 3px;
   background: transparent;
   position: relative;
@@ -715,17 +686,12 @@ html, body {
 }
 
 [data-theme="light"] .check-wrap input[type="checkbox"] {
-  border-color: rgba(42,74,56,.3);
-  border-radius: 0;
+	border-color: var(--text-dim);
 }
 
 .check-wrap input[type="checkbox"]:checked {
   border-color: var(--check-color);
-  background: rgba(200,160,96,.1);
-}
-
-[data-theme="light"] .check-wrap input[type="checkbox"]:checked {
-  background: var(--check-color);
+  background: var(--card-bg);
 }
 
 .check-wrap input[type="checkbox"]:checked + label { color: var(--check-color); }
@@ -997,6 +963,6 @@ html, body {
 
 @media (max-height: 600px) {
   /* On short viewports (landscape phone), let the card scroll within .page */
-  .page { align-items: flex-start; padding: 24px 0; }
+  .page { align-items: flex-start; }
   .wrapper { margin: auto; }
 }

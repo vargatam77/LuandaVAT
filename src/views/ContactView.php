@@ -19,6 +19,7 @@ use TamasVarga\LuandaPHP\Textarea;
 use TamasVarga\LuandaPHP\Select;
 use TamasVarga\LuandaPHP\SelectOption;
 use TamasVarga\LuandaPHP\input_events;
+use TamasVarga\LuandaPHP\Faicon;
 
 class ContactView {
 	
@@ -52,26 +53,29 @@ class ContactView {
 			"const t = this.checked ? 'light' : 'dark';
 			document.querySelector('.page').dataset.theme = t;
 			document.cookie = 'theme=' + t + ';path=/;max-age=31536000';"
-		);
-
+			);
+		
 		$_darkIcon = new Span();
 		$_darkIcon->addClass('theme-switch__icon theme-switch__icon--dark');
-		$_darkIcon->addContent(new Text('DARK'));
-
+		//$_darkIcon->addContent(new Text('DARK'));
+		$_darkIcon->addContent(new Faicon('moon'));
+		
 		$_track = new Span();
 		$_track->addClass('theme-switch__track');
-
+		
 		$_lightIcon = new Span();
 		$_lightIcon->addClass('theme-switch__icon theme-switch__icon--light');
-		$_lightIcon->addContent(new Text('LIGHT'));
-
+		//$_lightIcon->addContent(new Text('LIGHT'));
+		$_lightIcon->addContent(new Faicon('sun'));
+		
 		$_lbl = new Label();
 		$_lbl->setInput('theme-chk');
 		$_lbl->addClass('theme-switch');
 		$_lbl->addContent($_darkIcon);
 		$_lbl->addContent($_track);
 		$_lbl->addContent($_lightIcon);
-
+		
+		// Return both so createPage() can add them before the wrapper
 		return [$_chk, $_lbl];
 	}
 

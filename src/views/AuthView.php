@@ -243,9 +243,12 @@ class AuthView {
 		$_note->addClass('note');
 		$_note->addContent(new Text('Your details are held in strictest confidence.'));
 		
+		$_btnText = new Span();
+		$_btnText->addContent(new Text('CLAIM YOUR VAULT'));
+		
 		$_btn = new Button(form_button_type::BTN);
-		$_btn->addClass('btn');
-		$_btn->addContent(new Text('CLAIM YOUR VAULT'));
+		$_btn->addClass('btn btn-danger');
+		$_btn->addContent($_btnText);
 		
 		$_form->addContent($this->buildField(
 			form_input_type::TEXT, 'r_name', 'register_name',
@@ -276,9 +279,12 @@ class AuthView {
 		$_note->addClass('note');
 		$_note->addContent(new Text('This action is permanent and cannot be undone.'));
 		
+		$_btnText = new Span();
+		$_btnText->addContent(new Text('DEMOLISH YOUR VAULT'));
+		
 		$_btn = new Button(form_button_type::BTN);
 		$_btn->addClass('btn btn-danger');
-		$_btn->addContent(new Text('DEMOLISH YOUR VAULT'));
+		$_btn->addContent($_btnText);
 		
 		$_form->addContent($this->buildField(
 			form_input_type::EMAIL, 'x_email', 'leave_email',
