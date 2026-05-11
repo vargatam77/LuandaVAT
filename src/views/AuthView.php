@@ -29,7 +29,7 @@ class AuthView {
 	public function __construct(string $theme = 'dark') {
 		$this->theme = $theme;
 		
-		Element::Minify();
+		Element::Beautify();
 	}
 	
 	// ── Tab definitions ──────────────────────────────────────
@@ -128,81 +128,67 @@ class AuthView {
 	
 	// ── Shared field builder ──────────────────────────────────
 	
-	private function buildField(
-		string $type,
-		string $id,
-		string $name,
-		string $labelText,
-		int $minLen,
-		int $maxLen,
-		string $autocomplete,
-		bool $withEye = false
-		): Div {
-			$_div = new Div();
-			$_div->addClass('field');
+	private function buildField(string $type, string $id, string $name,	string $labelText, int $minLen,	int $maxLen, string $autocomplete, bool $withEye = false): Div {
+		$_div = new Div();
+		$_div->addClass('field');
+		
+		$_inp = new Input($type);
+		$_inp->setPlaceholder(' ');
+		$_inp->setId($id);
+		$_inp->setName($name);
+		$_inp->addAutocompletes($autocomplete);
+		$_inp->toRequired();
+		$_inp->setMinMaxLen($minLen, $maxLen);
+		
+		$_lbl = new Label();
+		$_lbl->setInput($id);
+		$_lbl->addContent(new Text($labelText));
+		
+		$_div->addContent($_inp);
+		$_div->addContent($_lbl);
+		
+		if ($withEye) {
+			$_eye = new Faicon(faicon_icons::PWD);
+			$_eye->addClass('faicon');
+			$_eye->addEvent(
+				mouse_events::CLICK,
+				"this.classList.toggle('fa-" . faicon_icons::TEXT . "');"
+				. "this.classList.toggle('fa-" . faicon_icons::PWD . "');"
+				. "{$id}.type=({$id}.type==='text'?'password':'text');{$id}.focus();"
+				);
 			
-			$_inp = new Input($type);
-			$_inp->setPlaceholder(' ');
-			$_inp->setId($id);
-			$_inp->setName($name);
-			$_inp->addAutocompletes($autocomplete);
-			$_inp->toRequired();
-			$_inp->setMinMaxLen($minLen, $maxLen);
-			
-			$_lbl = new Label();
-			$_lbl->setInput($id);
-			$_lbl->addContent(new Text($labelText));
-			
-			$_div->addContent($_inp);
-			$_div->addContent($_lbl);
-			
-			if ($withEye) {
-				$_eye = new Faicon(faicon_icons::PWD);
-				$_eye->addClass('faicon');
-				$_eye->addEvent(
-					mouse_events::CLICK,
-					"this.classList.toggle('fa-" . faicon_icons::TEXT . "');"
-					. "this.classList.toggle('fa-" . faicon_icons::PWD . "');"
-					. "{$id}.type=({$id}.type==='text'?'password':'text');{$id}.focus();"
-					);
-				
-				$_div->addContent($_eye);
-			}
-			
-			return $_div;
+			$_div->addContent($_eye);
+		}
+		
+		return $_div;
 	}
 	
 	// ── Checkbox meta-row builder ─────────────────────────────
 	
-	private function buildCheckRow(
-		string $checkId,
-		string $labelText,
-		string $onChangeJs,
-		?Anchor $rightAnchor = null
-		): Div {
-			$_metaDiv = new Div();
-			$_metaDiv->addClass('meta-row');
+	private function buildCheckRow(string $checkId,	string $labelText, string $onChangeJs, ?Anchor $rightAnchor = null): Div {
+		$_metaDiv = new Div();
+		$_metaDiv->addClass('meta-row');
+		
+		$_wrapDiv = new Div();
+		$_wrapDiv->addClass('check-wrap');
+		
+		$_chk = new Input(form_input_type::CHKBOX);
+		$_chk->setId($checkId);
+		$_chk->addEvent(input_events::CHANGE, $onChangeJs);
+		
+		$_lbl = new Label();
+		$_lbl->setInput($checkId);
+		$_lbl->addContent(new Text($labelText));
+		
+		$_wrapDiv->addContent($_chk);
+		$_wrapDiv->addContent($_lbl);
+		
+		$_metaDiv->addContent($_wrapDiv);
+		
+		if ($rightAnchor !== null)
+			$_metaDiv->addContent($rightAnchor);
 			
-			$_wrapDiv = new Div();
-			$_wrapDiv->addClass('check-wrap');
-			
-			$_chk = new Input(form_input_type::CHKBOX);
-			$_chk->setId($checkId);
-			$_chk->addEvent(input_events::CHANGE, $onChangeJs);
-			
-			$_lbl = new Label();
-			$_lbl->setInput($checkId);
-			$_lbl->addContent(new Text($labelText));
-			
-			$_wrapDiv->addContent($_chk);
-			$_wrapDiv->addContent($_lbl);
-			
-			$_metaDiv->addContent($_wrapDiv);
-			
-			if ($rightAnchor !== null)
-				$_metaDiv->addContent($rightAnchor);
-				
-				return $_metaDiv;
+		return $_metaDiv;
 	}
 	
 	// ── Login form ────────────────────────────────────────────
@@ -327,26 +313,22 @@ class AuthView {
 	
 	// ── Popovers ─────────────────────────────────────────────
 	
-	private function createPopover(
-		string $id,
-		string $headText,
-		string $bodyText
-		): Dialog {
-			$_dlg = new Dialog();
-			$_dlg->setPopover(popover_state::AUTO);
-			$_dlg->setId($id);
-			$_dlg->addClass('remember-warning');
-			
-			$_head = new Span();
-			$_head->addContent(new Text($headText));
-			
-			$_body = new Paragraph();
-			$_body->addContent(new Text($bodyText));
-			
-			$_dlg->addContent($_head);
-			$_dlg->addContent($_body);
-			
-			return $_dlg;
+	private function createPopover(string $id, string $headText, string $bodyText): Dialog {
+		$_dlg = new Dialog();
+		$_dlg->setPopover(popover_state::AUTO);
+		$_dlg->setId($id);
+		$_dlg->addClass('remember-warning');
+		
+		$_head = new Span();
+		$_head->addContent(new Text($headText));
+		
+		$_body = new Paragraph();
+		$_body->addContent(new Text($bodyText));
+		
+		$_dlg->addContent($_head);
+		$_dlg->addContent($_body);
+		
+		return $_dlg;
 	}
 	
 	// ── Card ─────────────────────────────────────────────────

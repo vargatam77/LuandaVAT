@@ -34,18 +34,18 @@
   --body-font:     'Cormorant Garamond', serif;
   --brand-size:    18px;
   --brand-spacing: 10px;
-  --tagline-size:  14px;
-  --label-size:    12px;
-  --label-sm:      10px;
-  --tab-size:      12px;
-  --meta-size:     12px;
+  --tagline-size:  12px;
+  --label-size:    10px;
+  --label-sm:      8.5px;
+  --tab-size:      10px;
+  --meta-size:     9px;
   --forgot-font:   'Cormorant Garamond', serif;
   --forgot-style:  italic;
-  --forgot-size:   14px;
+  --forgot-size:   13px;
   --note-font:     'Cormorant Garamond', serif;
   --note-style:    italic;
-  --note-size:     14px;
-  --input-size:    15px;
+  --note-size:     12px;
+  --input-size:    14px;
   --input-weight:  300;
 
   --btn-bg:        linear-gradient(105deg,#5c3e14 0%,#b08030 28%,#d8b060 50%,#b08030 72%,#5c3e14 100%);
@@ -131,7 +131,7 @@
   --note-font:     'Bodoni Moda', serif;
   --note-style:    italic;
   --note-size:     12px;
-  --input-size:    15px;
+  --input-size:    12px;
   --input-weight:  300;
 
   --btn-bg:        transparent;
@@ -189,9 +189,6 @@ a, button, label, [role="button"],
 input[type="checkbox"], input[type="radio"],
 .faicon, .forgot, .tabs label, .check-wrap label { cursor: pointer; }
 
-/* children inherit pointer from their parent */
-a *, button *, label *, .faicon * { cursor: inherit; }
-
 input[type="email"],
 input[type="text"],
 input[type="password"] { cursor: text; }
@@ -204,7 +201,7 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  cursor: default;
+  overflow: hidden;
 }
 
 /* .page is the fixed fullscreen frame that Google recommends for
@@ -215,6 +212,9 @@ html, body {
   inset: 0;
   width: 100%;
   height: 100dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
 
   /* layout: centre the card */
   display: flex;
@@ -524,8 +524,9 @@ html, body {
   width: 100%;
   background: transparent;
   border: none;
+  border-top: 16px solid transparent;
   border-bottom: 1px solid var(--gold-faint);
-  padding: 12px 0 8px;
+  padding: 0px 30px 4px 0px;
   color: var(--text);
   font-family: var(--body-font);
   font-size: var(--input-size);
@@ -554,7 +555,7 @@ html, body {
 
 .field label {
   position: absolute;
-  top: 12px; left: 0;
+  top: 16px; left: 0;
   font-family: var(--brand-font);
   font-size: var(--label-size);
   letter-spacing: 2px;
@@ -576,6 +577,109 @@ html, body {
   right: 0;
   top: 12px;
 }
+
+/* ── Textarea field ──────────────────────────────────────── */
+
+.field textarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-top: 16px solid transparent;
+  border-bottom: 1px solid var(--gold-faint);
+  padding: 0px 30px 4px 0px;
+  color: var(--text);
+  font-family: var(--body-font);
+  font-size: var(--input-size);
+  font-weight: var(--input-weight);
+  outline: none;
+  resize: none;
+  min-height: 90px;
+  line-height: 1.6;
+  display: block;
+  transition: border-color 0.3s;
+  
+  scrollbar-width: none;
+}
+
+.field textarea:focus { border-bottom-color: transparent; }
+
+.field textarea:focus + label,
+.field textarea:not(:placeholder-shown) + label {
+  top: -1px;
+  font-size: var(--label-sm);
+  color: var(--accent);
+}
+
+/* Character counter */
+.field__counter {
+  position: absolute;
+  bottom: 6px;
+  right: 0px;
+  font-family: var(--brand-font);
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--gold);
+  pointer-events: none;
+  transition: color 0.3s;
+}
+
+.field__counter.is-near  { color: rgba(255,140,0,1); }
+.field__counter.is-limit { color: rgba(255,80,80,1); }
+
+/* ── Select field ────────────────────────────────────────── */
+
+.field select {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-top: 16px solid transparent;  
+  border-bottom: 1px solid var(--gold-faint);
+  padding: 0px 20px 4px 0;
+  color: var(--text);
+  font-family: var(--body-font);
+  font-size: var(--input-size);
+  font-weight: var(--input-weight);
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+/* Hide the native arrow; we draw our own via the .field--select::before */
+.field--select::before {
+  content: '';
+  position: absolute;
+  right: 2px;
+  top: 16px;
+  width: 6px;
+  height: 6px;
+  border-right: 1px solid var(--gold-dim);
+  border-bottom: 1px solid var(--gold-dim);
+  transform: rotate(45deg);
+  pointer-events: none;
+  transition: border-color 0.3s, transform 0.3s;
+}
+
+.field--select:focus-within::before {
+  transform: rotate(225deg);
+  top: 20px;
+  border-color: var(--accent);
+}
+
+.field select:focus { border-bottom-color: transparent; }
+
+/* Select always shows label floated (it always has a value) */
+.field select + label {
+  top: -1px;
+  font-size: var(--label-sm);
+}
+
+.field select:focus + label { color: var(--accent); }
+
+/* Style the default/placeholder option dimly */
+.field select option[value=""] { color: var(--text-dim); }
+.field select option           { background: var(--card-bg); color: var(--text); }
 
 .fa-eye       { color: var(--accent); }
 .fa-eye-slash { color: var(--text-dim); }
@@ -696,7 +800,6 @@ html, body {
   height: 0;
   background: var(--btn-fill);
   transition: height 0.44s cubic-bezier(.4,0,.2,1);
-  cursor: pointer;
 }
 
 /* Shimmer for dark theme */
@@ -708,13 +811,9 @@ html, body {
   background: linear-gradient(105deg, transparent, rgba(255,255,255,.24), transparent);
   transform: skewX(-14deg);
   transition: left 0.7s ease;
-  cursor: pointer;
 }
 
-.btn span {
-	position: relative;
-	z-index: 1;
-}
+.btn span { position: relative; z-index: 1; }
 
 .btn:hover {
   background-position: 100% 0;
@@ -824,20 +923,6 @@ html, body {
   line-height: 1.5;
 }
 
-.code {
-	margin: auto;
-	height: 100dvh;
-	width: 100vw;
-	padding: 5px;
-	overflow: scroll;
-	color: var(--gold-bright);
-}
-
-.code pre {
-  white-space: pre-wrap; /* wraps long lines */
-  /* or */
-  overflow-x: auto; /* horizontal scroll instead */
-}
 
 /* ── Dark logo animations (keep isolated) ────────────────── */
 
@@ -912,6 +997,6 @@ html, body {
 
 @media (max-height: 600px) {
   /* On short viewports (landscape phone), let the card scroll within .page */
-  .page { align-items: flex-start; overflow-Y: auto; overflow-X: hidden;}
+  .page { align-items: flex-start; padding: 24px 0; }
   .wrapper { margin: auto; }
 }

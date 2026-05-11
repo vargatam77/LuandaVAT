@@ -23,7 +23,7 @@ class SourceView {
 	public function __construct(string $theme = 'dark') {
 		$this->theme = $theme;
 		
-		Element::Minify();
+		Element::Beautify();
 	}
 	
 	// ── Theme switch ─────────────────────────────────────────
