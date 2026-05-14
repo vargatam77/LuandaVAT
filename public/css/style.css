@@ -101,7 +101,7 @@
 
   --gold:          #2a4a38;
   --gold-bright:   #2a4a38;
-  --gold-faint2:   rgba(42,74,56,.60);
+  --gold-dim: 	   rgba(42,74,56,.60);
   --gold-faint:    rgba(42,74,56,.14);
   --gold-faint2:   rgba(42,74,56,.10);
   --gold-faint3:   transparent;
@@ -889,6 +889,18 @@ html, body {
   line-height: 1.5;
 }
 
+.remember-warning a {
+	color: var(--text-dim);
+	text-decoration: none;
+	transition: color .6s ease-out;
+	
+}
+.remember-warning a:hover {
+	color: var(--text);
+}
+.remember-warning a:visited {
+	color: var(--text-faint);
+}
 
 /* ── Dark logo animations (keep isolated) ────────────────── */
 

@@ -20,6 +20,10 @@ use TamasVarga\LuandaPHP\Select;
 use TamasVarga\LuandaPHP\SelectOption;
 use TamasVarga\LuandaPHP\input_events;
 use TamasVarga\LuandaPHP\Faicon;
+use TamasVarga\LuandaPHP\Dialog;
+use TamasVarga\LuandaPHP\popover_state;
+use TamasVarga\LuandaPHP\Paragraph;
+use TamasVarga\LuandaPHP\Anchor;
 
 class ContactView {
 	
@@ -160,12 +164,7 @@ class ContactView {
 		return $_div;
 	}
 
-	private function buildTextareaField(
-		string $id,
-		string $name,
-		string $labelText,
-		int $maxLen = 1000
-	): Div {
+	private function buildTextareaField(string $id,	string $name, string $labelText, int $maxLen = 255): Div {
 		$_div = new Div();
 		$_div->addClass('field');
 
@@ -174,18 +173,15 @@ class ContactView {
 		$_ta->setName($name);
 		$_ta->setPlaceholder(' ');
 		$_ta->toRequired();
-		$_ta->addAttr('maxlength', (string)$maxLen);
-		$_ta->addAttr('rows', '4');
-		// Character counter driven by inline JS; oninput updates the <span>
-		$_ta->addAttr(
-			'oninput',
-			"(function(t){"
-			. "var c=document.getElementById('{$id}_count'),"
-			. "r={$maxLen}-t.value.length;"
-			. "c.textContent=r;"
-			. "c.className='field__counter'"
-			. "+(r<50?' is-near':'')+(r<10?' is-limit':'');"
-			. "})(this)"
+		$_ta->setMinMaxLen(15, $maxLen);
+		$_ta->setSize(4);
+		$_ta->addEvent(input_events::INPUT,
+			$id . "_count.textContent=" . $maxLen ." - this.value.length; "
+				. $id . "_count.className = 'field__counter' "
+				. "+ (" . $id . "_count.textContent < 50 ? ' is-near' : '') "
+				. "+ (" . $id . "_count.textContent < 10 ? ' is-limit' : ''); "
+				. "(" . $id . "_count.textContent == 0) ? warning.showPopover() : warning.hidePopover(); "
+				. "this.focus();"
 		);
 
 		$_lbl = new Label();
@@ -238,7 +234,7 @@ class ContactView {
 		));
 		$_form->addContent($this->buildTextareaField(
 			'c_message', 'contact_message',
-			'YOUR MESSAGE', 1000
+			'YOUR MESSAGE'
 		));
 		$_form->addContent($_btn);
 		$_form->addContent($_note);
@@ -271,6 +267,15 @@ class ContactView {
 		$_powered->addClass('powered');
 		$_powered->addContent(new Text('Powered by LuandaPHP 2.1.0'));
 		$_card->addContent($_powered);
+		
+		$_email = new Anchor('mailto:vargatam@yahoo.com');
+		$_email->addContent(new Text('eMail'));
+		
+		$_card->addContent($this->createPopover(
+			'warning',
+			'⚠ TEXTAREA FULL',
+			'Should you have more to say, please consider contacting us via ' . $_email->getHtml() . ' at vargatam@yahoo.com.'
+			));
 
 		return $_card;
 	}
@@ -299,15 +304,36 @@ class ContactView {
 
 		return $_page;
 	}
+	
+	// ── Popovers ─────────────────────────────────────────────
+	
+	private function createPopover(string $id, string $headText, string $bodyText): Dialog {
+		$_dlg = new Dialog();
+		$_dlg->setPopover(popover_state::AUTO);
+		$_dlg->setId($id);
+		$_dlg->addClass('remember-warning');
+		
+		$_head = new Span();
+		$_head->addContent(new Text($headText));
+		
+		$_body = new Paragraph();
+		$_body->addContent(new Text($bodyText));
+		
+		$_dlg->addContent($_head);
+		$_dlg->addContent($_body);
+		
+		return $_dlg;
+	}
 
 	// ── Page entry point ──────────────────────────────────────
 
 	public function createPage(): Html {
 		$_page = new Html('LuandaVAT - Contact Us');
+		$_page->setBaseUrl('https://www.luandavat.co.uk/');
 
 		$_page->addStylesheet('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Cinzel:wght@400;500&family=Bodoni+Moda:ital,wght@0,400;0,500;1,400&family=Raleway:wght@300;400;500&display=swap');
-		$_page->addStylesheet('css/style.css?ver=' . time());
-		$_page->addStylesheet('css/theme-switch.css?ver=' . time());
+		$_page->addStylesheet('public/css/style.css?ver=' . time());
+		$_page->addStylesheet('public/css/theme-switch.css?ver=' . time());
 
 		$_page->setupMobile();
 		$_page->setupFontAwesome();

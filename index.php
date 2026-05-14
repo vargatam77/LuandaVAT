@@ -12,7 +12,6 @@ require_once 'vendor/autoload.php';
 $paths = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
 
 $path = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
-$path = trim(str_replace($paths[0], '', $path), '/');
 
 $theme = $_COOKIE['theme'] ?? 'dark';
 

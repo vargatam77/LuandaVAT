@@ -212,6 +212,7 @@ class AuthView {
 		$_btn = new Button(form_button_type::BTN);
 		$_btn->addClass('btn');
 		$_btn->addContent($_btnText);
+		$_btn->addEvent(mouse_events::CLICK, '');
 		
 		$_form->addContent($this->buildField(
 			form_input_type::EMAIL, 'l_email', 'login_email',
@@ -411,10 +412,11 @@ class AuthView {
 	
 	public function createPage(): Html {
 		$_page = new Html('LuandaVAT - private access');
+		$_page->setBaseUrl('https://www.luandavat.co.uk/');
 		
 		$_page->addStylesheet('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Cinzel:wght@400;500&family=Bodoni+Moda:ital,wght@0,400;0,500;1,400&family=Raleway:wght@300;400;500&display=swap');
-		$_page->addStylesheet('css/style.css?ver=' . time());
-		$_page->addStylesheet('css/theme-switch.css?ver=' . time());
+		$_page->addStylesheet('public/css/style.css?ver=' . time());
+		$_page->addStylesheet('public/css/theme-switch.css?ver=' . time());
 		
 		$_page->setupMobile();
 		$_page->setupFontAwesome();

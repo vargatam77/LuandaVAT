@@ -115,9 +115,10 @@ class SourceView {
 	
 	public function createPage(): Html {
 		$_page = new Html('AuthView source code');
+		$_page->setBaseUrl('https://www.luandavat.co.uk/');
 		
-		$_page->addStylesheet('css/style.css?ver=' . time());
-		$_page->addStylesheet('css/theme-switch.css?ver=' . time());
+		$_page->addStylesheet('public/css/style.css?ver=' . time());
+		$_page->addStylesheet('public/css/theme-switch.css?ver=' . time());
 		
 		if ($this->theme === 'dark')
 			$_page->addStylesheet('https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css');

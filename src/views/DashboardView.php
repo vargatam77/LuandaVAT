@@ -18,9 +18,14 @@ use TamasVarga\LuandaPHP\Faicon;
 use TamasVarga\LuandaPHP\Anchor;
 use TamasVarga\LuandaPHP\Button;
 use TamasVarga\LuandaPHP\form_button_type;
+use LuandaVAT\controllers\AuthController;
+use LuandaVAT\controllers\auth_req;
+
+include __DIR__ . '/../controllers/AuthController.php';
 
 class DashboardView {
     private string $theme;
+    private AuthController $authController;
     
     private array $menuItems = [
     	'Dashboard'			=> './dashboard',
@@ -31,10 +36,10 @@ class DashboardView {
     ];
     
     private array $navLinks = [
-    	'HOME'		=> './dashboard',
-    	'LOGIN'		=> './login',
-    	'CONTACT'	=> './contact',
-    	'LOGOUT'	=> './logout',
+    	'HOME'		=> [auth_req::NONE, './dashboard'],
+    	'LOGIN'		=> [auth_req::UNAUTH, './login'],
+    	'CONTACT'	=> [auth_req::NONE, './contact'],
+    	'LOGOUT'	=> [auth_req::BASIC | auth_req::ADMIN, './logout']
     ];
 
     public function __construct(string $theme = 'dark') {
@@ -123,12 +128,14 @@ class DashboardView {
         $_nav = new Div();
         $_nav->addClass('header-nav');
 
-        foreach ($this->navLinks as $_menu => $_link) {
-            $_navLink = new Anchor($_link);
-            $_navLink->addClass('nav-link');
-            $_navLink->addContent(new Text($_menu));
-
-            $_nav->addContent($_navLink);
+        foreach ($this->navLinks as $_menu => $_linkData) {
+        	if (($_linkData[0] & (auth_req::BASIC | auth_req::ADMIN)) == 0 || $_linkData[0] == (AuthController::isAuthenticated() + 1)) {
+	            $_navLink = new Anchor($_linkData[1]);
+	            $_navLink->addClass('nav-link');
+	            $_navLink->addContent(new Text($_menu));
+	
+	            $_nav->addContent($_navLink);
+        	}
         }
 
         $_header->addContent($_nav);
@@ -276,12 +283,13 @@ class DashboardView {
     // ── Page entry point ──────────────────────────────────────
 
     public function createPage(): Html {
-        $_page = new Html('LuandaVAT — Dashboard');
+    	$_page = new Html('LuandaVAT — Dashboard');
+    	$_page->setBaseUrl('https://www.luandavat.co.uk/');
 
         $_page->addStylesheet('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Cinzel:wght@400;500&family=Bodoni+Moda:ital,wght@0,400;0,500;1,400&family=Raleway:wght@300;400;500&display=swap');
-        $_page->addStylesheet('css/style.css?ver=' . time());
-        $_page->addStylesheet('css/theme-switch.css?ver=' . time());
-        $_page->addStylesheet('css/dashboard.css?ver=' . time());
+        $_page->addStylesheet('public/css/style.css?ver=' . time());
+        $_page->addStylesheet('public/css/theme-switch.css?ver=' . time());
+        $_page->addStylesheet('public/css/dashboard.css?ver=' . time());
 
         $_page->setupMobile();
         $_page->setupFontAwesome();
