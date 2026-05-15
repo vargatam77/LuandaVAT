@@ -29,11 +29,11 @@ class DashboardView {
     private AuthController $authController;
     
     private array $menuItems = [
-    	'Dashboard'			=> './dashboard',
-    	'File Return'		=> '#',
-    	'History'			=> '#',
-    	'Settings'			=> '#',
-    	'Help & Support'	=> './contact',
+    	'Dashboard'			=> [auth_req::NONE, './dashboard'],
+    	'File Return'		=> [auth_req::NONE, '#'],
+    	'History'			=> [auth_req::NONE, '#'],
+    	'Settings'			=> [auth_req::NONE, '#'],
+    	'Help & Support'	=> [auth_req::NONE, './contact'],
     ];
     
     private array $navLinks = [
@@ -155,22 +155,23 @@ class DashboardView {
         $_menuTitle->addClass('menu-title');
         $_menuTitle->addContent(new Text('MENU'));
         $_aside->addContent($_menuTitle);
-
+		
         // Menu items from array
         $_menuList = new Div();
         $_menuList->addClass('menu-list');
 
-        foreach ($this->menuItems as $_menu => $_link) {
-        	
-        	$_btnText = new Span();
-        	$_btnText->addContent(new Text(strtoupper($_menu)));
-        	
-        	$_btn = new Button(form_button_type::BTN);
-        	$_btn->addClass('btn');
-        	$_btn->addContent($_btnText);
-        	$_btn->addEvent(mouse_events::CLICK, "window.location.href='" . $_link . "';");
-
-            $_menuList->addContent($_btn);
+        foreach ($this->menuItems as $_menu => $_linkData) {
+        	if (($_linkData[0] & (auth_req::BASIC | auth_req::ADMIN)) == 0 || $_linkData[0] == (AuthController::isAuthenticated() + 1)) {
+	        	$_btnText = new Span();
+	        	$_btnText->addContent(new Text(strtoupper($_menu)));
+	        	
+	        	$_btn = new Button(form_button_type::BTN);
+	        	$_btn->addClass('btn');
+	        	$_btn->addContent($_btnText);
+	        	$_btn->addEvent(mouse_events::CLICK, "window.location.href='" . $_linkData[1] . "';");
+	
+	            $_menuList->addContent($_btn);
+        	}
         }
 
         $_aside->addContent($_menuList);
