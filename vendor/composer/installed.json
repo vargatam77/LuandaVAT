@@ -7,18 +7,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/vargatam77/LuandaPHP.git",
-                "reference": "7f4211708770aa5a6fe2c915e76eb348b123036a"
+                "reference": "fdaf95f80e88f595b9c171a2ad37d9a917627d1f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vargatam77/LuandaPHP/zipball/7f4211708770aa5a6fe2c915e76eb348b123036a",
-                "reference": "7f4211708770aa5a6fe2c915e76eb348b123036a",
+                "url": "https://api.github.com/repos/vargatam77/LuandaPHP/zipball/fdaf95f80e88f595b9c171a2ad37d9a917627d1f",
+                "reference": "fdaf95f80e88f595b9c171a2ad37d9a917627d1f",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.2"
             },
-            "time": "2026-05-11T22:35:56+00:00",
+            "time": "2026-05-15T00:35:34+00:00",
             "type": "library",
             "installation-source": "source",
             "autoload": {
