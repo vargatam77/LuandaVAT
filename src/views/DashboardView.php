@@ -20,6 +20,7 @@ use TamasVarga\LuandaPHP\Button;
 use TamasVarga\LuandaPHP\form_button_type;
 use LuandaVAT\controllers\AuthController;
 use LuandaVAT\controllers\auth_req;
+use TamasVarga\LuandaPHP\image_mime_types;
 
 include __DIR__ . '/../controllers/AuthController.php';
 
@@ -290,6 +291,7 @@ class DashboardView {
     public function createPage(): Html {
     	$_page = new Html('LuandaVAT — Dashboard');
     	$_page->setBaseUrl('https://www.luandavat.co.uk/');
+    	$_page->setFavIcon('favicon.svg', image_mime_types::SVG);
 
         $_page->addStylesheet('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Cinzel:wght@400;500&family=Bodoni+Moda:ital,wght@0,400;0,500;1,400&family=Raleway:wght@300;400;500&display=swap');
         $_page->addStylesheet('public/css/style.css?ver=' . time());

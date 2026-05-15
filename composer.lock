@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/vargatam77/LuandaPHP.git",
-                "reference": "fdaf95f80e88f595b9c171a2ad37d9a917627d1f"
+                "reference": "2911fd9b8b6b791baaee7cc90b8018f9cd28208d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vargatam77/LuandaPHP/zipball/fdaf95f80e88f595b9c171a2ad37d9a917627d1f",
-                "reference": "fdaf95f80e88f595b9c171a2ad37d9a917627d1f",
+                "url": "https://api.github.com/repos/vargatam77/LuandaPHP/zipball/2911fd9b8b6b791baaee7cc90b8018f9cd28208d",
+                "reference": "2911fd9b8b6b791baaee7cc90b8018f9cd28208d",
                 "shasum": ""
             },
             "require": {
@@ -46,7 +46,7 @@
                 "issues": "https://github.com/vargatam77/LuandaPHP/issues",
                 "source": "https://github.com/vargatam77/LuandaPHP/tree/2.1"
             },
-            "time": "2026-05-15T00:35:34+00:00"
+            "time": "2026-05-15T01:43:51+00:00"
         }
     ],
     "packages-dev": [],

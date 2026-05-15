@@ -3,7 +3,7 @@
         'name' => 'luandavat/luandavat',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '11bdbf19392617857779a1719be617aa7c0f22db',
+        'reference' => '14e37cdbfa0466e67d82c4c9aff0b6e23982919b',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'luandavat/luandavat' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '11bdbf19392617857779a1719be617aa7c0f22db',
+            'reference' => '14e37cdbfa0466e67d82c4c9aff0b6e23982919b',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -22,7 +22,7 @@
         'tamasvarga/luandaphp' => array(
             'pretty_version' => '2.1.x-dev',
             'version' => '2.1.9999999.9999999-dev',
-            'reference' => 'fdaf95f80e88f595b9c171a2ad37d9a917627d1f',
+            'reference' => '2911fd9b8b6b791baaee7cc90b8018f9cd28208d',
             'type' => 'library',
             'install_path' => __DIR__ . '/../tamasvarga/luandaphp',
             'aliases' => array(),
