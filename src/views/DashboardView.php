@@ -195,6 +195,8 @@ class DashboardView {
         return $_main;
     }
     
+    // ── Wrapper for main ───────────────────────────────────────────
+    
     private function createMainWrapper(): Div {
     	$_main = new Div();
     	$_main->addClass('main-wrap');
@@ -229,8 +231,11 @@ class DashboardView {
         $_footer = new Div();
         $_footer->addClass('footer');
 
-        $_text = new Text('LuandaVAT™ — Tamas Varga 2026 — Powered by LuandaPHP™ 2.1.0');
-        $_footer->addContent($_text);
+        $_footer->addContent($_spnTM = new Span());
+        $_spnTM->addContent(new Text('LuandaVAT™ — Tamas Varga 2026 — Powered by LuandaPHP™ 2.1.0'));
+        
+        $_footer->addContent($_spnFA = new Span());
+        $_spnFA->addContent(new Text('Awesome icons by Font Awesome - https://fontawesome.com'));
 
         return $_footer;
     }

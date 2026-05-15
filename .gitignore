@@ -1,1 +1,10 @@
 /vendor/
+/public/fontawesome/
+.git
+.settings
+.buildpath
+.project
+*.lock
+*.phar
+.env
+.ENV

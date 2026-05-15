@@ -14,8 +14,11 @@ $paths = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'
 $path = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 
 $theme = $_COOKIE['theme'] ?? 'dark';
+$status = $_SERVER['REDIRECT_STATUS'] ?? 200;
 
-if (strtolower($path) === 'login') {
+if ($status >= 400 && $status <= 500) {
+	echo "<h1>Error</h1><p>You are not allowed here.</p>";
+} else if (strtolower($path) === 'login') {
 	$authView = new AuthView($theme);
 	$authView->createPage()->Show();
 } else if (strtolower($path) === 'contact') {

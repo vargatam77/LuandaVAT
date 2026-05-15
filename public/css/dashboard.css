@@ -11,10 +11,11 @@
     "header  header  header"
     "left    main    right"
     "footer  footer  footer";
-  grid-template-columns: 240px 1fr 260px;
+  grid-template-columns: 240px 1fr 520px;
   grid-template-rows: 200px 1fr auto;
   width: 100%;
-  min-height: 100dvh;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
 }
 
 /* ── Header ──────────────────────────────────────────────── */
@@ -255,6 +256,8 @@
   font-size: 10px;
   letter-spacing: 1.5px;
   color: var(--text-dim);
+  display: flex;
+  justify-content: space-around;
   z-index: 10;
 }
 
@@ -290,7 +293,7 @@
 
 /* ── Mobile: left menu slides in as drawer ───────────────── */
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
 
   .layout {
     grid-template-areas:
@@ -375,7 +378,7 @@
 
 /* ── Tablet: squeeze right aside ─────────────────────────── */
 
-@media (max-width: 1024px) and (min-width: 769px) {
+@media (max-width: 1200px) and (min-width: 992px) {
   .layout {
     grid-template-columns: 220px 1fr 200px;
   }
