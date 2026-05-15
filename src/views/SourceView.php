@@ -16,6 +16,7 @@ use TamasVarga\LuandaPHP\Div;
 use TamasVarga\LuandaPHP\Element;
 use TamasVarga\LuandaPHP\script_type;
 use TamasVarga\LuandaPHP\Code;
+use TamasVarga\LuandaPHP\image_mime_types;
 
 class SourceView {
 	private ?string $theme = null;
@@ -116,6 +117,7 @@ class SourceView {
 	public function createPage(): Html {
 		$_page = new Html('AuthView source code');
 		$_page->setBaseUrl('https://www.luandavat.co.uk/');
+		$_page->setFavIcon('favicon.svg', image_mime_types::SVG);
 		
 		$_page->addStylesheet('public/css/style.css?ver=' . time());
 		$_page->addStylesheet('public/css/theme-switch.css?ver=' . time());
