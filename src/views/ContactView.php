@@ -329,7 +329,7 @@ class ContactView {
 	// ── Page entry point ──────────────────────────────────────
 
 	public function createPage(): Html {
-		$_page = new Html('LuandaVAT - Contact Us');
+		$_page = new Html('LuandaVAT — Contact Us');
 		$_page->setBaseUrl('https://www.luandavat.co.uk/');
 		$_page->setFavIcon('favicon.svg', image_mime_types::SVG);
 

@@ -23,22 +23,40 @@ use TamasVarga\LuandaPHP\popover_state;
 use TamasVarga\LuandaPHP\Dialog;
 use TamasVarga\LuandaPHP\input_events;
 use TamasVarga\LuandaPHP\image_mime_types;
+use TamasVarga\LuandaPHP\form_method;
+use TamasVarga\LuandaPHP\script_type;
+use TamasVarga\LuandaPHP\Misc\IncidentReporter;
 
 class AuthView {
-	private ?string $theme = null;
+	private ?string $theme     = null;
+	private string  $activeTab = form_tabs::LOGIN;
+	
+	public PageContract     $pageContract;
+	public LoginContract    $loginContract;
+	public RegisterContract $registerContract;
+	public DeleteContract   $deleteContract;
 	
 	public function __construct(string $theme = 'dark') {
 		$this->theme = $theme;
 		
+		$this->pageContract     = new PageContract();
+		$this->loginContract    = new LoginContract();
+		$this->registerContract = new RegisterContract();
+		$this->deleteContract   = new DeleteContract();
+		
 		Element::Beautify();
+	}
+	
+	public function setActiveTab(string $tabId): void {
+		$this->activeTab = $tabId;
 	}
 	
 	// ── Tab definitions ──────────────────────────────────────
 	
 	private array $tabProps = [
-		'tab-login'    => 'SIGN<BR/>IN',
-		'tab-register' => 'CREATE<BR/>ACCOUNT',
-		'tab-logout'   => 'LEAVE<BR/>FOREVER',
+		form_tabs::LOGIN	=> 'SIGN<BR/>IN',
+		form_tabs::REGISTER	=> 'CREATE<BR/>ACCOUNT',
+		form_tabs::DELETE	=> 'LEAVE<BR/>FOREVER',
 	];
 	
 	// ── Theme switch ─────────────────────────────────────────
@@ -57,7 +75,7 @@ class AuthView {
 			"const t = this.checked ? 'light' : 'dark';
 			document.querySelector('.page').dataset.theme = t;
 			document.cookie = 'theme=' + t + ';path=/;max-age=31536000';"
-		);
+			);
 		
 		$_darkIcon = new Span();
 		$_darkIcon->addClass('theme-switch__icon theme-switch__icon--dark');
@@ -127,9 +145,28 @@ class AuthView {
 		return $_tabsDiv;
 	}
 	
-	// ── Shared field builder ──────────────────────────────────
+	// ── CSRF hidden input ─────────────────────────────────────
+	//
+	// Inserted as the first element of every form so the token is always
+	// submitted regardless of which fields the user fills.
 	
-	private function buildField(string $type, string $id, string $name,	string $labelText, int $minLen,	int $maxLen, string $autocomplete, bool $withEye = false): Div {
+	private function buildCsrfInput(): Input {
+		$_inp = new Input(form_input_type::HIDDEN);
+		$_inp->setName('csrf_token');
+		$_inp->addAttr('value', $this->pageContract->csrfToken);
+		
+		return $_inp;
+	}
+	
+	// ── Shared field builder ──────────────────────────────────
+	//
+	// $state carries pre-fill value and error message from the controller.
+	// Password fields never receive a pre-fill value (security).
+	// When an error is present the input gains class 'input-error' and an
+	// absolutely-positioned <span class="field-error-msg"> is appended to
+	// the .field wrapper so the surrounding layout is not disturbed.
+	
+	private function buildField(string $type, string $id, string $name, string $labelText, int $minLen, int $maxLen, string $autocomplete, bool $withEye = false, ?FieldState $state = null): Div {
 		$_div = new Div();
 		$_div->addClass('field');
 		
@@ -141,32 +178,48 @@ class AuthView {
 		$_inp->toRequired();
 		$_inp->setMinMaxLen($minLen, $maxLen);
 		
-		$_lbl = new Label();
-		$_lbl->setInput($id);
-		$_lbl->addContent(new Text($labelText));
-		
-		$_div->addContent($_inp);
-		$_div->addContent($_lbl);
-		
-		if ($withEye) {
-			$_eye = new Faicon(faicon_icons::PWD);
-			$_eye->addClass('faicon');
-			$_eye->addEvent(
-				mouse_events::CLICK,
-				"this.classList.toggle('fa-" . faicon_icons::TEXT . "');"
-				. "this.classList.toggle('fa-" . faicon_icons::PWD . "');"
-				. "{$id}.type=({$id}.type==='text'?'password':'text');{$id}.focus();"
-				);
+		if ($state !== null && $state->value !== '' && $type !== form_input_type::PWD)
+			$_inp->addAttr('value', $state->value);
 			
-			$_div->addContent($_eye);
-		}
-		
-		return $_div;
+			if ($state !== null && $state->error !== '')
+				$_inp->addClass('input-error');
+				
+				$_lbl = new Label();
+				$_lbl->setInput($id);
+				$_lbl->addContent(new Text($labelText));
+				
+				$_div->addContent($_inp);
+				$_div->addContent($_lbl);
+				
+				if ($withEye) {
+					$_eye = new Faicon(faicon_icons::PWD);
+					$_eye->addClass('faicon');
+					$_eye->addEvent(
+						mouse_events::CLICK,
+						"this.classList.toggle('fa-" . faicon_icons::TEXT . "');"
+						. "this.classList.toggle('fa-" . faicon_icons::PWD . "');"
+						. "{$id}.type=({$id}.type==='text'?'password':'text');{$id}.focus();"
+						);
+					
+					$_div->addContent($_eye);
+				}
+				
+				if ($state !== null && $state->error !== '') {
+					$_errSpan = new Span();
+					$_errSpan->addClass('field-error-msg');
+					$_errSpan->addContent(new Text($state->error));
+					$_div->addContent($_errSpan);
+				}
+				
+				return $_div;
 	}
 	
 	// ── Checkbox meta-row builder ─────────────────────────────
+	//
+	// $checked restores checkbox state after a failed submission.
+	// Checkboxes carry no error state — they cannot be invalid.
 	
-	private function buildCheckRow(string $checkId,	string $labelText, string $onChangeJs, ?Anchor $rightAnchor = null): Div {
+	private function buildCheckRow(string $checkId, string $labelText, string $onChangeJs, ?Anchor $rightAnchor = null, bool $checked = false): Div {
 		$_metaDiv = new Div();
 		$_metaDiv->addClass('meta-row');
 		
@@ -176,6 +229,8 @@ class AuthView {
 		$_chk = new Input(form_input_type::CHKBOX);
 		$_chk->setId($checkId);
 		$_chk->addEvent(input_events::CHANGE, $onChangeJs);
+		
+		if ($checked) $_chk->Check();
 		
 		$_lbl = new Label();
 		$_lbl->setInput($checkId);
@@ -189,7 +244,7 @@ class AuthView {
 		if ($rightAnchor !== null)
 			$_metaDiv->addContent($rightAnchor);
 			
-		return $_metaDiv;
+			return $_metaDiv;
 	}
 	
 	// ── Login form ────────────────────────────────────────────
@@ -197,6 +252,8 @@ class AuthView {
 	private function createLoginForm(): Form {
 		$_form = new Form();
 		$_form->setId('l_form');
+		$_form->setMethod(form_method::POST);
+		$_form->setAction('auth/login');
 		$_form->addClass('form-panel login-panel');
 		
 		$_forgotLink = new Anchor('#');
@@ -210,23 +267,27 @@ class AuthView {
 		$_btnText = new Span();
 		$_btnText->addContent(new Text('ENTER YOUR VAULT'));
 		
-		$_btn = new Button(form_button_type::BTN);
+		$_btn = new Button(form_button_type::SUBMIT);
 		$_btn->addClass('btn');
 		$_btn->addContent($_btnText);
 		$_btn->addEvent(mouse_events::CLICK, '');
 		
+		$_form->addContent($this->buildCsrfInput());
 		$_form->addContent($this->buildField(
 			form_input_type::EMAIL, 'l_email', 'login_email',
-			'EMAIL ADDRESS', 6, 60, 'username'
+			'EMAIL ADDRESS', 6, 60, 'username',
+			state: $this->loginContract->email
 			));
 		$_form->addContent($this->buildField(
 			form_input_type::PWD, 'l_pass', 'login_password',
-			'PASSWORD', 12, 60, 'current-password', withEye: true
+			'PASSWORD', 12, 60, 'current-password', withEye: true,
+			state: $this->loginContract->password
 			));
 		$_form->addContent($this->buildCheckRow(
 			'remember', 'REMEMBER ME',
 			'if(this.checked)warning.showPopover();',
-			$_forgotLink
+			$_forgotLink,
+			$this->loginContract->remember
 			));
 		$_form->addContent($_btn);
 		$_form->addContent($_note);
@@ -239,6 +300,8 @@ class AuthView {
 	private function createRegisterForm(): Form {
 		$_form = new Form();
 		$_form->setId('r-form');
+		$_form->setMethod(form_method::POST);
+		$_form->setAction('auth/register');
 		$_form->addClass('form-panel register-panel');
 		
 		$_note = new Div();
@@ -248,21 +311,25 @@ class AuthView {
 		$_btnText = new Span();
 		$_btnText->addContent(new Text('CLAIM YOUR VAULT'));
 		
-		$_btn = new Button(form_button_type::BTN);
+		$_btn = new Button(form_button_type::SUBMIT);
 		$_btn->addClass('btn btn-danger');
 		$_btn->addContent($_btnText);
 		
+		$_form->addContent($this->buildCsrfInput());
 		$_form->addContent($this->buildField(
 			form_input_type::TEXT, 'r_name', 'register_name',
-			'FULL NAME', 2, 60, 'name'
+			'FULL NAME', 2, 60, 'name',
+			state: $this->registerContract->name
 			));
 		$_form->addContent($this->buildField(
 			form_input_type::EMAIL, 'r_email', 'register_email',
-			'EMAIL ADDRESS', 6, 60, 'username'
+			'EMAIL ADDRESS', 6, 60, 'username',
+			state: $this->registerContract->email
 			));
 		$_form->addContent($this->buildField(
 			form_input_type::PWD, 'r_pass', 'register_password',
-			'PASSWORD', 12, 60, 'new-password', withEye: true
+			'PASSWORD', 12, 60, 'new-password', withEye: true,
+			state: $this->registerContract->password
 			));
 		$_form->addContent($_btn);
 		$_form->addContent($_note);
@@ -275,7 +342,9 @@ class AuthView {
 	private function createLeaveForm(): Form {
 		$_form = new Form();
 		$_form->setId('x-form');
-		$_form->addClass('form-panel logout-panel');
+		$_form->setMethod(form_method::POST);
+		$_form->setAction('auth/delete');
+		$_form->addClass('form-panel delete-panel');
 		
 		$_note = new Div();
 		$_note->addClass('note');
@@ -284,21 +353,26 @@ class AuthView {
 		$_btnText = new Span();
 		$_btnText->addContent(new Text('DEMOLISH YOUR VAULT'));
 		
-		$_btn = new Button(form_button_type::BTN);
+		$_btn = new Button(form_button_type::SUBMIT);
 		$_btn->addClass('btn btn-danger');
 		$_btn->addContent($_btnText);
 		
+		$_form->addContent($this->buildCsrfInput());
 		$_form->addContent($this->buildField(
 			form_input_type::EMAIL, 'x_email', 'leave_email',
-			'EMAIL ADDRESS', 6, 60, 'username'
+			'EMAIL ADDRESS', 6, 60, 'username',
+			state: $this->deleteContract->email
 			));
 		$_form->addContent($this->buildField(
 			form_input_type::PWD, 'x_pass', 'leave_password',
-			'CONFIRM PASSWORD', 12, 60, 'current-password', withEye: true
+			'CONFIRM PASSWORD', 12, 60, 'current-password', withEye: true,
+			state: $this->deleteContract->password
 			));
 		$_form->addContent($this->buildCheckRow(
 			'send_data', 'SEND MY DATA',
-			'if(this.checked)data_warning.showPopover();'
+			'if(this.checked)data_warning.showPopover();',
+			null,
+			$this->deleteContract->send_data
 			));
 		$_form->addContent($_btn);
 		$_form->addContent($_note);
@@ -321,9 +395,9 @@ class AuthView {
 	
 	// ── Popovers ─────────────────────────────────────────────
 	
-	private function createPopover(string $id, string $headText, string $bodyText): Dialog {
+	private function createPopover(string $id, string $headText, string $bodyText, string $popoverstate = popover_state::AUTO): Dialog {
 		$_dlg = new Dialog();
-		$_dlg->setPopover(popover_state::AUTO);
+		$_dlg->setPopover($popoverstate);
 		$_dlg->setId($id);
 		$_dlg->addClass('remember-warning');
 		
@@ -340,6 +414,10 @@ class AuthView {
 	}
 	
 	// ── Card ─────────────────────────────────────────────────
+	//
+	// Each tab radio writes the active tab id to a cookie on change so PHP
+	// can restore it server-side on the next load via setActiveTab().
+	// The checked state is driven by $this->activeTab (default 'tab-login').
 	
 	private function createCardDiv(): Div {
 		$_card = new Div();
@@ -350,7 +428,11 @@ class AuthView {
 			$_radio = new Input(form_input_type::RADIOBTN);
 			$_radio->setName('tab');
 			$_radio->setId($_id);
-			if (str_contains($_id, 'login'))
+			$_radio->addEvent(
+				input_events::CHANGE,
+				"document.cookie='active_tab='+this.id+';path=/;max-age=31536000';"
+				);
+			if ($_id === $this->activeTab)
 				$_radio->Check();
 				$_card->addClone($_radio);
 		}
@@ -368,6 +450,13 @@ class AuthView {
 			'data_warning',
 			'⚠ DATA NOTICE',
 			'Your saved data will be sent to your registered email before deletion. This may take a few minutes.'
+			));
+		
+		if ($this->pageContract->error !== null)
+			$_card->addContent($this->createPopover(
+				'global_error',
+				'⚠ NOTICE',
+				$this->pageContract->error
 			));
 		
 		$_powered = new Div();
@@ -388,6 +477,19 @@ class AuthView {
 		$_page = new Div();
 		$_page->addClass('page');
 		$_page->addAttr('data-theme', $this->theme);
+		
+		if ($this->pageContract->csrfToken === '') {
+			$_page->setInert();
+			
+			$_page->addContent($this->createPopover(
+				'fatal_error',
+				'⚠ ERROR',
+				'Session error, please refresh page.',
+				popover_state::MANUAL
+			));
+			
+			if (IncidentReporter::isAvailable()) IncidentReporter::report('AuthView', 'Missing csrf token');
+		}
 		
 		// Theme switch sits inside .page so CSS sibling selector works:
 		// #theme-chk:checked ~ .theme-switch (both children of .page)
@@ -412,8 +514,13 @@ class AuthView {
 	// ── Page entry point ──────────────────────────────────────
 	
 	public function createPage(): Html {
-		$_page = new Html('LuandaVAT - private access');
-		$_page->setBaseUrl('https://www.luandavat.co.uk/');
+		$_page = new Html('LuandaVAT — private access');
+		
+		if (in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1']))
+			$_page->setBaseUrl('https://localhost/LuandaVAT/');
+		else
+			$_page->setBaseUrl('https://www.luandavat.co.uk/');
+		
 		$_page->setFavIcon('favicon.svg', image_mime_types::SVG);
 		
 		$_page->addStylesheet('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Cinzel:wght@400;500&family=Bodoni+Moda:ital,wght@0,400;0,500;1,400&family=Raleway:wght@300;400;500&display=swap');
@@ -424,6 +531,12 @@ class AuthView {
 		$_page->setupFontAwesome();
 		
 		$_page->addContent($this->createPageDiv());
+		
+		if ($this->pageContract->error !== null)
+			$_page->addScript(script_type::RUNCMD, 'global_error.showPopover();');
+		
+		if ($this->pageContract->csrfToken === '')
+			$_page->addScript(script_type::RUNCMD, 'fatal_error.showPopover();');
 		
 		return $_page;
 	}
@@ -468,8 +581,76 @@ class AuthView {
 }
 
 class faicon_icons {
-	public const TEXT = 'eye';
-	public const PWD  = 'eye-slash';
+	public const TEXT		= 'eye';
+	public const PWD		= 'eye-slash';
+	public const LIGHT		= 'sun';
+	public const DARK		= 'moon';
+}
+
+class form_tabs {
+	public const LOGIN		= 'tab-login';
+	public const REGISTER	= 'tab-register';
+	public const DELETE		= 'tab-delete';
+}
+
+// ── Field state & form contracts ──────────────────────────────
+//
+// FieldState is the unit of data the controller writes per field:
+//   $view->loginContract->email->value = 'foo@bar.com';
+//   $view->loginContract->email->error = 'Invalid address';
+//
+// Checkbox fields carry only a bool — they cannot be "faulty".
+//
+// PageContract is page-level: the CSRF token (required, written by every
+// controller before render) and an optional business-logic error string
+// that triggers the global_error popover.  Field-validation errors never
+// touch pageContract->error; they go directly to the relevant FieldState.
+//
+// Contracts are instantiated on AuthView construction so the controller
+// always finds them ready, even if it sets nothing.
+
+class FieldState {
+	public string $value	= '';
+	public string $error	= '';
+}
+
+class PageContract {
+	public string  $csrfToken	= '';
+	public ?string $error		= null;
+}
+
+class LoginContract {
+	public FieldState $email;
+	public FieldState $password;
+	public bool $remember = false;
+	
+	public function __construct() {
+		$this->email	= new FieldState();
+		$this->password	= new FieldState();
+	}
+}
+
+class RegisterContract {
+	public FieldState $name;
+	public FieldState $email;
+	public FieldState $password;
+	
+	public function __construct() {
+		$this->name		= new FieldState();
+		$this->email	= new FieldState();
+		$this->password	= new FieldState();
+	}
+}
+
+class DeleteContract {
+	public FieldState $email;
+	public FieldState $password;
+	public bool $send_data = false;
+	
+	public function __construct() {
+		$this->email	= new FieldState();
+		$this->password	= new FieldState();
+	}
 }
 
 ?>

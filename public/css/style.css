@@ -317,7 +317,7 @@ html, body {
 
 /* ── Hidden radio tabs ───────────────────────────────────── */
 
-#tab-login, #tab-register, #tab-logout { display: none; }
+#tab-login, #tab-register, #tab-delete { display: none; }
 
 
 /* ── Logo ────────────────────────────────────────────────── */
@@ -439,11 +439,11 @@ html, body {
 /* Active tab label colour */
 #tab-login:checked    ~ .tabs label[for="tab-login"],
 #tab-register:checked ~ .tabs label[for="tab-register"],
-#tab-logout:checked   ~ .tabs label[for="tab-logout"] { color: var(--accent); }
+#tab-delete:checked   ~ .tabs label[for="tab-delete"] { color: var(--accent); }
 
 /* Slide indicator */
 #tab-register:checked ~ .tabs::after { transform: translateX(100%); }
-#tab-logout:checked   ~ .tabs::after { transform: translateX(200%); }
+#tab-delete:checked   ~ .tabs::after { transform: translateX(200%); }
 
 
 /* ── Forms container ─────────────────────────────────────── */
@@ -469,7 +469,7 @@ html, body {
 /* Active panels */
 #tab-login:checked    ~ .forms .login-panel,
 #tab-register:checked ~ .forms .register-panel,
-#tab-logout:checked   ~ .forms .logout-panel {
+#tab-delete:checked   ~ .forms .delete-panel {
   opacity: 1;
   pointer-events: all;
   transform: none;
@@ -477,7 +477,7 @@ html, body {
 
 /* Slide outgoing panels left */
 #tab-register:checked ~ .forms .login-panel,
-#tab-logout:checked   ~ .forms .register-panel {
+#tab-delete:checked   ~ .forms .register-panel {
   opacity: 0;
   pointer-events: none;
   transform: translateX(-22px);
@@ -540,6 +540,26 @@ html, body {
   top: -1px;
   font-size: var(--label-sm);
   color: var(--accent);
+}
+
+/* Error label — sits just below the field, takes no layout space */
+.field-error-msg {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    color: var(--color-error, #c0392b);
+    white-space: nowrap;
+    pointer-events: none;
+    line-height: 1.4;
+    padding-top: 0.2rem;
+}
+
+/* Input border tint when invalid */
+.input-error {
+    border-color: var(--color-error, #c0392b) !important;
+    outline-color: var(--color-error, #c0392b) !important;
 }
 
 /* Eye icon (password toggle) */
