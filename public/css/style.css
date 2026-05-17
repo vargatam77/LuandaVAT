@@ -78,6 +78,8 @@
   /* Checkbox danger colour (dark "remember" is red) */
   --check-color:   rgba(255,0,0,1);
   --check-tick:    rgba(255,0,0,1);
+  
+  --error-color:	rgba(255,100,100,1);
 
   --popover-bg:    #0d0a10;
   --popover-border:rgba(180,40,40,1);
@@ -159,6 +161,8 @@
 
   --check-color:   rgba(255,0,0,1);
   --check-tick:    rgba(255,0,0,1);
+  
+  --error-color:	rgba(255,100,100,1);
 
   --popover-bg:    #ffffff;
   --popover-border:rgba(180,40,40,1);
@@ -544,22 +548,24 @@ html, body {
 
 /* Error label — sits just below the field, takes no layout space */
 .field-error-msg {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    font-size: 0.68rem;
-    letter-spacing: 0.04em;
-    color: var(--color-error, #c0392b);
-    white-space: nowrap;
-    pointer-events: none;
-    line-height: 1.4;
-    padding-top: 0.2rem;
+  position: absolute;
+  top: 80%;
+  right: 0;
+  font-family: var(--forgot-font);
+  font-style: var(--forgot-style);
+  font-size: var(--forgot-size);
+  background-color: var(--card-bg);
+  letter-spacing: 0.3px;
+  color: var(--error-color);
+  white-space: nowrap;
+  pointer-events: none;
+  line-height: 1.4;
+  z-index: 100;
 }
 
 /* Input border tint when invalid */
 .input-error {
-    border-color: var(--color-error, #c0392b) !important;
-    outline-color: var(--color-error, #c0392b) !important;
+  border-bottom: 1px solid var(--error-color);
 }
 
 /* Eye icon (password toggle) */

@@ -27,6 +27,11 @@ if ($status >= 400 && $status <= 500) {
 } else if (strtolower($path) === 'login') {
 	$authView = new AuthView($theme);
 	$authView->pageContract->csrfToken='test';
+	$authView->loginContract->email->value = 'test@test.te';
+	$authView->loginContract->email->error = 'invalid email';
+	$authView->loginContract->password->value = 'testpass';
+	$authView->loginContract->password->error = 'invalid pwd';
+	$authView->loginContract->remember = true;
 	$authView->createPage()->Show();
 } else if (strtolower($path) === 'contact') {
 	$contactView = new ContactView($theme);

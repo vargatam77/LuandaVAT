@@ -178,40 +178,40 @@ class AuthView {
 		$_inp->toRequired();
 		$_inp->setMinMaxLen($minLen, $maxLen);
 		
-		if ($state !== null && $state->value !== '' && $type !== form_input_type::PWD)
-			$_inp->addAttr('value', $state->value);
+		if ($state !== null && $state->value !== '')
+			$_inp->value = $state->value;
 			
-			if ($state !== null && $state->error !== '')
-				$_inp->addClass('input-error');
-				
-				$_lbl = new Label();
-				$_lbl->setInput($id);
-				$_lbl->addContent(new Text($labelText));
-				
-				$_div->addContent($_inp);
-				$_div->addContent($_lbl);
-				
-				if ($withEye) {
-					$_eye = new Faicon(faicon_icons::PWD);
-					$_eye->addClass('faicon');
-					$_eye->addEvent(
-						mouse_events::CLICK,
-						"this.classList.toggle('fa-" . faicon_icons::TEXT . "');"
-						. "this.classList.toggle('fa-" . faicon_icons::PWD . "');"
-						. "{$id}.type=({$id}.type==='text'?'password':'text');{$id}.focus();"
-						);
-					
-					$_div->addContent($_eye);
-				}
-				
-				if ($state !== null && $state->error !== '') {
-					$_errSpan = new Span();
-					$_errSpan->addClass('field-error-msg');
-					$_errSpan->addContent(new Text($state->error));
-					$_div->addContent($_errSpan);
-				}
-				
-				return $_div;
+		if ($state !== null && $state->error !== '')
+			$_inp->addClass('input-error');
+			
+		$_lbl = new Label();
+		$_lbl->setInput($id);
+		$_lbl->addContent(new Text($labelText));
+		
+		$_div->addContent($_inp);
+		$_div->addContent($_lbl);
+		
+		if ($withEye) {
+			$_eye = new Faicon(faicon_icons::PWD);
+			$_eye->addClass('faicon');
+			$_eye->addEvent(
+				mouse_events::CLICK,
+				"this.classList.toggle('fa-" . faicon_icons::TEXT . "');"
+				. "this.classList.toggle('fa-" . faicon_icons::PWD . "');"
+				. "{$id}.type=({$id}.type==='text'?'password':'text');{$id}.focus();"
+				);
+			
+			$_div->addContent($_eye);
+		}
+		
+		if ($state !== null && $state->error !== '') {
+			$_errSpan = new Span();
+			$_errSpan->addClass('field-error-msg');
+			$_errSpan->addContent(new Text($state->error));
+			$_div->addContent($_errSpan);
+		}
+		
+		return $_div;
 	}
 	
 	// ── Checkbox meta-row builder ─────────────────────────────
@@ -244,7 +244,7 @@ class AuthView {
 		if ($rightAnchor !== null)
 			$_metaDiv->addContent($rightAnchor);
 			
-			return $_metaDiv;
+		return $_metaDiv;
 	}
 	
 	// ── Login form ────────────────────────────────────────────
